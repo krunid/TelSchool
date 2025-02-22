@@ -3,12 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>เบอร์โทรโรงเรียน</title>
+    <title>ติดต่อใครเอ่ย?</title>
+    <!-- เพิ่ม Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f0f0f0;
             padding: 20px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
         h1 {
             text-align: center;
@@ -38,19 +43,49 @@
         .contact button {
             background-color: green;
             color: white;
-            padding: 5px 10px;
+            padding: 10px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .contact button:hover {
             background-color: darkgreen;
         }
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+        }
+        .contact-info span {
+            margin: 2px 0;
+        }
+        footer {
+            text-align: center;
+            margin-top: auto;
+            padding: 20px;
+            background-color: #333;
+            color: white;
+            border-radius: 10px;
+        }
+        footer a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
-    <h1>เบอร์โทรโรงเรียน</h1>
+    <h1>ติดต่อใครเอ่ย?</h1>
     <div id="content"></div>
+
+    <footer>
+        <p>พัฒนาโดย <a href="https://krunid.github.io/krunid/" target="_blank">ครูนิด หลวงพ่อเสือ</a></p>
+        <p>ลิขสิทธิ์โปรแกรม &copy; 2025</p>
+    </footer>
 
     <script>
         // URL ของ Google Apps Script Web App
@@ -82,8 +117,14 @@
                         const contactDiv = document.createElement('div');
                         contactDiv.className = 'contact';
                         contactDiv.innerHTML = `
-                            <span>${contact['ชื่อ']} (${contact['ตำแหน่ง']}): ${contact['เบอร์โทร']}</span>
-                            <button onclick="call('${contact['เบอร์โทร'].replace(/-/g, '')}')">โทร</button>
+                            <div class="contact-info">
+                                <span>1. ชื่อ: ${contact['ชื่อ']}</span>
+                                <span>2. ตำแหน่ง: ${contact['ตำแหน่ง']}</span>
+                                <span>3. เบอร์โทร: ${contact['เบอร์โทร']}</span>
+                            </div>
+                            <button onclick="call('${contact['เบอร์โทร'].replace(/-/g, '')}')">
+                                <i class="fas fa-phone"></i> <!-- ไอคอนโทรศัพท์ -->
+                            </button>
                         `;
                         categoryDiv.appendChild(contactDiv);
                     });
