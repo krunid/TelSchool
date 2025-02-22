@@ -28,7 +28,7 @@
             margin-bottom: 5px;
             color: #555;
         }
-        input[type="text"], input[type="tel"] {
+        input[type="text"], input[type="tel"], input[type="file"] {
             width: 100%;
             padding: 8px;
             margin-bottom: 10px;
@@ -47,6 +47,12 @@
         button:hover {
             background-color: darkgreen;
         }
+        .preview-image {
+            max-width: 100%;
+            height: auto;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
@@ -64,40 +70,72 @@
         <label for="category">หมวดหมู่:</label>
         <input type="text" id="category" name="category" required>
 
-        <label for="image">ลิงก์ภาพ:</label>
-        <input type="text" id="image" name="image" required>
+        <label for="image">แนบภาพ:</label>
+        <input type="file" id="image" name="image" accept="image/*" required>
+        <img id="imagePreview" class="preview-image" src="#" alt="ภาพตัวอย่าง" style="display: none;">
 
         <button type="submit">เพิ่มข้อมูล</button>
     </form>
 
     <script>
+        // แสดงภาพตัวอย่างเมื่อเลือกไฟล์
+        document.getElementById('image').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const preview = document.getElementById('imagePreview');
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
         // ฟังก์ชันส่งข้อมูลไปยัง Google Sheets
         document.getElementById('adminForm').addEventListener('submit', function (e) {
             e.preventDefault();
 
             const formData = new FormData(this);
-            const data = {};
-            formData.forEach((value, key) => {
-                data[key] = value;
-            });
+            const fileInput = document.getElementById('image');
+            const file = fileInput.files[0];
 
-            // ส่งข้อมูลไปยัง Google Apps Script
-            fetch('https://script.google.com/macros/s/AKfycbz0sXOcFA747e87HdNaqQbdxSHNV3lGfGH1ZdBayqtux1HjdKrhQY9m6AIg4wyq5l7JOQ/exec', {
-                method: 'POST',
-                body: JSON.stringify(data),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(result => {
-                alert('เพิ่มข้อมูลสำเร็จ!');
-                document.getElementById('adminForm').reset();
-            })
-            .catch(error => {
-                console.error('เกิดข้อผิดพลาด:', error);
-                alert('เกิดข้อผิดพลาดในการเพิ่มข้อมูล');
-            });
+            // อัปโหลดภาพไปยัง Google Drive
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const imageData = e.target.result.split(',')[1]; // แปลงเป็น Base64
+                    const data = {
+                        name: formData.get('name'),
+                        position: formData.get('position'),
+                        phone: formData.get('phone'),
+                        category: formData.get('category'),
+                        image: imageData
+                    };
+
+                    // ส่งข้อมูลไปยัง Google Apps Script
+                    fetch('https://script.google.com/macros/s/AKfycbz0sXOcFA747e87HdNaqQbdxSHNV3lGfGH1ZdBayqtux1HjdKrhQY9m6AIg4wyq5l7JOQ/exec', {
+                        method: 'POST',
+                        body: JSON.stringify(data),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(result => {
+                        alert('เพิ่มข้อมูลสำเร็จ!');
+                        document.getElementById('adminForm').reset();
+                        document.getElementById('imagePreview').style.display = 'none';
+                    })
+                    .catch(error => {
+                        console.error('เกิดข้อผิดพลาด:', error);
+                        alert('เกิดข้อผิดพลาดในการเพิ่มข้อมูล');
+                    });
+                };
+                reader.readAsDataURL(file);
+            } else {
+                alert('กรุณาเลือกภาพ');
+            }
         });
     </script>
 </body>
