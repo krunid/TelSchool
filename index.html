@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เบอร์โทรโรงเรียน</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .category {
+            margin-bottom: 20px;
+            background-color: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .category h2 {
+            color: #555;
+            margin-bottom: 10px;
+        }
+        .contact {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .contact:last-child {
+            border-bottom: none;
+        }
+        .contact button {
+            background-color: green;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .contact button:hover {
+            background-color: darkgreen;
+        }
+    </style>
+</head>
+<body>
+    <h1>เบอร์โทรโรงเรียน</h1>
+    <div id="content"></div>
+
+    <script>
+        // URL ของ Google Apps Script Web App
+        const apiUrl = 'https://script.google.com/macros/s/AKfycbz0sXOcFA747e87HdNaqQbdxSHNV3lGfGH1ZdBayqtux1HjdKrhQY9m6AIg4wyq5l7JOQ/exec';
+
+        // ฟังก์ชันดึงข้อมูลจาก API
+        async function fetchData() {
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+                const categories = {};
+
+                // จัดกลุ่มข้อมูลตามหมวดหมู่
+                data.forEach(item => {
+                    const category = item['หมวดหมู่'];
+                    if (!categories[category]) {
+                        categories[category] = [];
+                    }
+                    categories[category].push(item);
+                });
+
+                // แสดงข้อมูลในหน้าเว็บ
+                const content = document.getElementById('content');
+                for (const [category, contacts] of Object.entries(categories)) {
+                    const categoryDiv = document.createElement('div');
+                    categoryDiv.className = 'category';
+                    categoryDiv.innerHTML = `<h2>${category}</h2>`;
+                    contacts.forEach(contact => {
+                        const contactDiv = document.createElement('div');
+                        contactDiv.className = 'contact';
+                        contactDiv.innerHTML = `
+                            <span>${contact['ชื่อ']} (${contact['ตำแหน่ง']}): ${contact['เบอร์โทร']}</span>
+                            <button onclick="call('${contact['เบอร์โทร'].replace(/-/g, '')}')">โทร</button>
+                        `;
+                        categoryDiv.appendChild(contactDiv);
+                    });
+                    content.appendChild(categoryDiv);
+                }
+            } catch (error) {
+                console.error('เกิดข้อผิดพลาดในการดึงข้อมูล:', error);
+            }
+        }
+
+        // ฟังก์ชันโทรออก
+        function call(phoneNumber) {
+            if (phoneNumber) {
+                window.location.href = `tel:${phoneNumber}`;
+            }
+        }
+
+        // ดึงข้อมูลเมื่อหน้าเว็บโหลดเสร็จ
+        window.onload = fetchData;
+    </script>
+</body>
+</html>
