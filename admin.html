@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - เพิ่มข้อมูล</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            color: #333;
+        }
+        form {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        input[type="text"], input[type="tel"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            background-color: green;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            background-color: darkgreen;
+        }
+    </style>
+</head>
+<body>
+    <h1>เพิ่มข้อมูล</h1>
+    <form id="adminForm">
+        <label for="name">ชื่อ:</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="position">ตำแหน่ง:</label>
+        <input type="text" id="position" name="position" required>
+
+        <label for="phone">เบอร์โทร:</label>
+        <input type="tel" id="phone" name="phone" required>
+
+        <label for="category">หมวดหมู่:</label>
+        <input type="text" id="category" name="category" required>
+
+        <label for="image">ลิงก์ภาพ:</label>
+        <input type="text" id="image" name="image" required>
+
+        <button type="submit">เพิ่มข้อมูล</button>
+    </form>
+
+    <script>
+        // ฟังก์ชันส่งข้อมูลไปยัง Google Sheets
+        document.getElementById('adminForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+            const data = {};
+            formData.forEach((value, key) => {
+                data[key] = value;
+            });
+
+            // ส่งข้อมูลไปยัง Google Apps Script
+            fetch('https://script.google.com/macros/s/AKfycbz0sXOcFA747e87HdNaqQbdxSHNV3lGfGH1ZdBayqtux1HjdKrhQY9m6AIg4wyq5l7JOQ/exec', {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(result => {
+                alert('เพิ่มข้อมูลสำเร็จ!');
+                document.getElementById('adminForm').reset();
+            })
+            .catch(error => {
+                console.error('เกิดข้อผิดพลาด:', error);
+                alert('เกิดข้อผิดพลาดในการเพิ่มข้อมูล');
+            });
+        });
+    </script>
+</body>
+</html>
