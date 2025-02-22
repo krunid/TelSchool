@@ -23,6 +23,14 @@
             text-align: center;
             color: #555;
         }
+        .logo {
+            display: block;
+            margin: 0 auto;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
         .category {
             margin-bottom: 20px;
             background-color: white;
@@ -65,6 +73,13 @@
         .contact-info span {
             margin: 2px 0;
         }
+        .teacher-image {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 10px;
+        }
         footer {
             text-align: center;
             margin-top: auto;
@@ -80,17 +95,36 @@
         footer a:hover {
             text-decoration: underline;
         }
+        .admin-button {
+            background-color: #ff5722;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .admin-button:hover {
+            background-color: #e64a19;
+        }
     </style>
 </head>
 <body>
-    
+    <!-- โลโก้โรงเรียน -->
+    <img src="https://via.placeholder.com/100" alt="โลโก้โรงเรียน" class="logo">
+
     <h1>ติดต่อใครเอ่ย?</h1>
     <h3>App Tel in School</h3>
+
     <div id="content"></div>
 
     <footer>
         <p>พัฒนาโดย <a href="https://krunid.github.io/krunid/" target="_blank">ครูนิด หลวงพ่อเสือ</a></p>
         <p>ลิขสิทธิ์โปรแกรม &copy; 2025</p>
+        <!-- ปุ่ม Admin -->
+        <button class="admin-button" onclick="window.open('https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID/edit', '_blank')">
+            <i class="fas fa-user-cog"></i> Admin
+        </button>
     </footer>
 
     <script>
@@ -123,10 +157,13 @@
                         const contactDiv = document.createElement('div');
                         contactDiv.className = 'contact';
                         contactDiv.innerHTML = `
-                            <div class="contact-info">
-                                <span>1. ชื่อ: ${contact['ชื่อ']}</span>
-                                <span>2. ตำแหน่ง: ${contact['ตำแหน่ง']}</span>
-                                <span>3. เบอร์โทร: ${contact['เบอร์โทร']}</span>
+                            <div style="display: flex; align-items: center;">
+                                <img src="${contact['ภาพ']}" alt="ครู" class="teacher-image">
+                                <div class="contact-info">
+                                    <span>1. ชื่อ: ${contact['ชื่อ']}</span>
+                                    <span>2. ตำแหน่ง: ${contact['ตำแหน่ง']}</span>
+                                    <span>3. เบอร์โทร: ${contact['เบอร์โทร']}</span>
+                                </div>
                             </div>
                             <button onclick="call('${contact['เบอร์โทร'].replace(/-/g, '')}')">
                                 <i class="fas fa-phone"></i> <!-- ไอคอนโทรศัพท์ -->
